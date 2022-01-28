@@ -44,75 +44,79 @@ const GET = async (request, response) => {
 const POST = async (request, response) => {
   var { voters, title, description } = request.body;
 
-  if (!voters?.length)
-    return response.status(400).send({ message: "No voters were specified." });
+  try {
+    if (!voters?.length)
+      return response
+        .status(400)
+        .send({ message: "No voters were specified." });
 
-  voters = shuffle(voters);
+    voters = shuffle(voters);
 
-  voters = await Promise.all(
-    voters.map(async (voter) => {
-      const token = crypto.randomBytes(20).toString("hex");
-      const privateId = crypto.randomBytes(10).toString("hex");
-      console.log(token);
-      const salt = await bcrypt.genSalt(10);
-      const hash = await bcrypt.hash(token, salt);
-      console.log(hash);
-      return { ...voter, hash, token, privateId };
-    })
-  );
+    voters = await Promise.all(
+      voters.map(async (voter) => {
+        const token = crypto.randomBytes(20).toString("hex");
+        const privateId = crypto.randomBytes(10).toString("hex");
+        console.log(token);
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(token, salt);
+        console.log(hash);
+        return { ...voter, hash, token, privateId };
+      })
+    );
 
-  var contributionAnalysis = new ContributionAnalysis({
-    title,
-    description,
-    voters: voters.map(({ email, name, hash, privateId }) => ({
-      email,
-      name,
-      hash,
-      privateId,
-    })),
-  });
-
-  contributionAnalysis = await contributionAnalysis.save();
-
-  var html = fs.readFileSync("public/email.html", "utf-8");
-
-  const client = new SMTPClient({
-    user: process.env.EMAIL_ADDRESS,
-    password: process.env.EMAIL_PASSWORD,
-    host: "smtp.gmail.com",
-    ssl: true,
-  });
-
-  const { id, voters: votersSaved } = contributionAnalysis;
-  const base = `http://localhost:3000/contribution-analysis/`;
-
-  voters.map(({ email, name, token }, index) => {
-    const queryString = new URLSearchParams({
-      id,
-      voterId: votersSaved[index]._id,
-      token,
+    var contributionAnalysis = new ContributionAnalysis({
+      title,
+      description,
+      voters: voters.map(({ email, name, hash, privateId }) => ({
+        email,
+        name,
+        hash,
+        privateId,
+      })),
     });
-    html = html
-      .replace("[URL_VOTE]", `${base}vote?${queryString}`)
-      .replace("[URL_RESULTS]", `${base}results?${queryString}`)
-      .replace("[TITLE]", title)
-      .replace("[DESCRIPTION]", description)
-      .replace("[NAME]", name);
 
-    console.log(html);
+    contributionAnalysis = await contributionAnalysis.save();
 
-    client.send({
-      from: "SigmaVote <fogar.dev@gmail.com>",
-      to: email,
-      subject: `Voting invitation for ${name}`,
-      attachment: [
-        {
-          data: html,
-          alternative: true,
-        },
-      ],
+    var html = fs.readFileSync("public/email.html", "utf-8");
+
+    const client = new SMTPClient({
+      user: process.env.EMAIL_ADDRESS,
+      password: process.env.EMAIL_PASSWORD,
+      host: "smtp.gmail.com",
+      ssl: true,
     });
-  });
+
+    const { id, voters: votersSaved } = contributionAnalysis;
+    const base = `${request.headers.origin}/contribution-analysis/`;
+
+    voters.map(({ email, name, token }, index) => {
+      const queryString = new URLSearchParams({
+        id,
+        voterId: votersSaved[index]._id,
+        token,
+      });
+      html = html
+        .replace("[URL_VOTE]", `${base}vote?${queryString}`)
+        .replace("[URL_RESULTS]", `${base}results?${queryString}`)
+        .replace("[TITLE]", title)
+        .replace("[DESCRIPTION]", description)
+        .replace("[NAME]", name);
+
+      client.send({
+        from: "SigmaVote <fogar.dev@gmail.com>",
+        to: email,
+        subject: `Voting invitation for ${name}`,
+        attachment: [
+          {
+            data: html,
+            alternative: true,
+          },
+        ],
+      });
+    });
+  } catch (error) {
+    return response.status(500).send({ message: "Unknown error", error });
+  }
 
   response.json({ message: "Poll created successfully." });
 };
