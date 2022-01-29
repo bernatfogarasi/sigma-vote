@@ -77,7 +77,11 @@ const POST = async (request, response) => {
 
     contributionAnalysis = await contributionAnalysis.save();
 
-    var html = fs.readFileSync("public/email.html", "utf-8");
+    const path = require("path");
+
+    const htmlPath = path.resolve(process.cwd(), "public/email.html");
+
+    var html = fs.readFileSync(htmlPath, "utf-8");
 
     const client = new SMTPClient({
       user: process.env.EMAIL_ADDRESS,
