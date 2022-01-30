@@ -93,31 +93,34 @@ const POST = async (request, response) => {
     const { id, voters: votersSaved } = contributionAnalysis;
     const base = `${request.headers.origin}/contribution-analysis/`;
 
-    voters.map(({ email, name, token }, index) => {
-      const queryString = new URLSearchParams({
-        id,
-        voterId: votersSaved[index]._id,
-        token,
-      });
-      html = html
-        .replace("[URL_VOTE]", `${base}vote?${queryString}`)
-        .replace("[URL_RESULTS]", `${base}results?${queryString}`)
-        .replace("[TITLE]", title)
-        .replace("[DESCRIPTION]", description)
-        .replace("[NAME]", name);
+    await Promise.all(
+      voters.map(async ({ email, name, token }, index) => {
+        const queryString = new URLSearchParams({
+          id,
+          voterId: votersSaved[index]._id,
+          token,
+        });
 
-      client.send({
-        from: "SigmaVote <fogar.dev@gmail.com>",
-        to: email,
-        subject: `Voting invitation for ${name}`,
-        attachment: [
-          {
-            data: html,
-            alternative: true,
-          },
-        ],
-      });
-    });
+        html = html
+          .replace("[URL_VOTE]", `${base}vote?${queryString}`)
+          .replace("[URL_RESULTS]", `${base}results?${queryString}`)
+          .replace("[TITLE]", title)
+          .replace("[DESCRIPTION]", description)
+          .replace("[NAME]", name);
+
+        const message = await client.sendAsync({
+          from: "SigmaVote <fogar.dev@gmail.com>",
+          to: email,
+          subject: `Voting invitation for ${name}`,
+          attachment: [
+            {
+              data: html,
+              alternative: true,
+            },
+          ],
+        });
+      })
+    );
   } catch (error) {
     return response.status(500).send({ message: "Unknown error", error });
   }
