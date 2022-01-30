@@ -109,7 +109,7 @@ const POST = async (request, response) => {
           .replace("[NAME]", name);
 
         const message = await client.sendAsync({
-          from: "SigmaVote <fogar.dev@gmail.com>",
+          from: `SigmaVote <${email}>`,
           to: email,
           subject: `Voting invitation for ${name}`,
           attachment: [
