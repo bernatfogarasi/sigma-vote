@@ -86,7 +86,8 @@ const POST = async (request, response) => {
     const client = new SMTPClient({
       user: process.env.EMAIL_ADDRESS,
       password: process.env.EMAIL_PASSWORD,
-      host: "smtp.gmail.com",
+      // host: "smtp.gmail.com",
+      host: "smtp.mail.yahoo.com",
       ssl: true,
     });
 
@@ -95,6 +96,7 @@ const POST = async (request, response) => {
 
     await Promise.all(
       voters.map(async ({ email, name, token }, index) => {
+        console.log("test-loop");
         const queryString = new URLSearchParams({
           id,
           voterId: votersSaved[index]._id,
@@ -108,21 +110,29 @@ const POST = async (request, response) => {
           .replace("[DESCRIPTION]", description)
           .replace("[NAME]", name);
 
-        const message = await client.sendAsync({
-          from: `SigmaVote <${email}>`,
-          to: email,
-          subject: `Voting invitation for ${name}`,
-          attachment: [
-            {
-              data: html,
-              alternative: true,
-            },
-          ],
-        });
+        try {
+          const message = await client.sendAsync({
+            from: `SigmaVote <${email}>`,
+            to: email,
+            subject: `Voting invitation for ${name}`,
+            attachment: [
+              {
+                data: html,
+                alternative: true,
+              },
+            ],
+          });
+        } catch (error) {
+          return response
+            .status(500)
+            .send({ message: "Could not send email.", error });
+        }
       })
     );
   } catch (error) {
-    return response.status(500).send({ message: "Unknown error", error });
+    return response
+      .status(500)
+      .send({ message: "Unknown error", error: { error, html } });
   }
 
   response.json({ message: "Poll created successfully." });
