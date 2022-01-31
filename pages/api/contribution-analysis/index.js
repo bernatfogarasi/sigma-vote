@@ -89,9 +89,11 @@ const POST = async (request, response) => {
       // host: "smtp.gmail.com",
       host: "smtp.gmail.com",
       // ssl: true,
+      tls: true,
+      authentication: "PLAIN",
     });
 
-    console.log(email, client);
+    console.log(process.env.EMAIL_ADDRESS, process.env.EMAIL_PASSWORD, client);
 
     const { id, voters: votersSaved } = contributionAnalysis;
     const base = `${request.headers.origin}/contribution-analysis/`;
