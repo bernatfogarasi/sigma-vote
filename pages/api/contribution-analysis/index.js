@@ -93,8 +93,6 @@ const POST = async (request, response) => {
       authentication: "PLAIN",
     });
 
-    console.log(process.env.EMAIL_ADDRESS, process.env.EMAIL_PASSWORD, client);
-
     const { id, voters: votersSaved } = contributionAnalysis;
     const base = `${request.headers.origin}/contribution-analysis/`;
 
@@ -107,13 +105,6 @@ const POST = async (request, response) => {
           token,
         });
 
-        html = html
-          .replace("[URL_VOTE]", `${base}vote?${queryString}`)
-          .replace("[URL_RESULTS]", `${base}results?${queryString}`)
-          .replace("[TITLE]", title)
-          .replace("[DESCRIPTION]", description)
-          .replace("[NAME]", name);
-
         try {
           const message = await client.sendAsync({
             from: `SigmaVote <${email}>`,
@@ -121,7 +112,12 @@ const POST = async (request, response) => {
             subject: `Voting invitation for ${name}`,
             attachment: [
               {
-                data: html,
+                data: html
+                  .replaceAll("[URL_VOTE]", `${base}vote?${queryString}`)
+                  .replaceAll("[URL_RESULTS]", `${base}results?${queryString}`)
+                  .replaceAll("[TITLE]", title)
+                  .replaceAll("[DESCRIPTION]", description)
+                  .replaceAll("[NAME]", name),
                 alternative: true,
               },
             ],
