@@ -81,7 +81,7 @@ const POST = async (request, response) => {
 
     const htmlPath = path.resolve(process.cwd(), "public/email.html");
 
-    var html = fs.readFileSync(htmlPath, "utf-8");
+    const html = fs.readFileSync(htmlPath, "utf-8");
 
     const client = new SMTPClient({
       user: process.env.EMAIL_ADDRESS,
@@ -113,16 +113,22 @@ const POST = async (request, response) => {
             attachment: [
               {
                 data: html
-                  .replaceAll("[URL_VOTE]", `${base}vote?${queryString}`)
-                  .replaceAll("[URL_RESULTS]", `${base}results?${queryString}`)
-                  .replaceAll("[TITLE]", title)
-                  .replaceAll("[DESCRIPTION]", description)
-                  .replaceAll("[NAME]", name),
+                  .split("[URL_VOTE]")
+                  .join(`${base}vote?${queryString}`)
+                  .split("[URL_RESULTS]")
+                  .join(`${base}results?${queryString}`)
+                  .split("[TITLE]")
+                  .join(title)
+                  .split("[DESCRIPTION]")
+                  .join(description)
+                  .split("[NAME]")
+                  .join(name),
                 alternative: true,
               },
             ],
           });
         } catch (error) {
+          console.log(error);
           return response
             .status(500)
             .send({ message: "Could not send email.", error });
@@ -130,9 +136,8 @@ const POST = async (request, response) => {
       })
     );
   } catch (error) {
-    return response
-      .status(500)
-      .send({ message: "Unknown error", error: { error, html } });
+    console.log(error);
+    return response.status(500).send({ message: "Unknown error", error });
   }
 
   response.json({ message: "Poll created successfully." });
