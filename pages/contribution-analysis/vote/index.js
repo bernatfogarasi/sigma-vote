@@ -1,13 +1,14 @@
-import Page from "components/Page";
-import styled from "styled-components";
-import Section_ from "components/Section";
-import { useEffect, useState } from "react";
-import useQuery from "hooks/useQuery";
-import ItemInput from "components/ItemInput";
 import Button from "components/Button";
-import useRequest from "hooks/useRequest";
 import Error from "components/Error";
+import ItemInput from "components/ItemInput";
 import Loading from "components/Loading";
+import Page from "components/Page";
+import Section_ from "components/Section";
+import useQuery from "hooks/useQuery";
+import useRequest from "hooks/useRequest";
+import Router from "next/router";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
 
 const Wrapper = styled(Page)``;
 
@@ -81,6 +82,7 @@ const Home = ({ className, ...props }) => {
     const { id, voterId, token } = query;
     const queryString = new URLSearchParams({ id, voterId, token }).toString();
     postVote(`/api/contribution-analysis/vote?${queryString}`, votes);
+    Router.push(`/feedback?type=voted`);
   };
 
   return loadingVoters ? (

@@ -1,10 +1,10 @@
+import Image_ from "components/Image";
+import Loading from "components/Loading";
 import Page from "components/Page";
 import Section_ from "components/Section";
-import styled from "styled-components";
 import useQuery from "hooks/useQuery";
 import { useEffect, useState } from "react";
-import Loading from "components/Loading";
-import Image_ from "components/Image";
+import styled from "styled-components";
 
 const Wrapper = styled(Page)``;
 
@@ -21,6 +21,11 @@ const types = {
     description: (
       <>The poll was created successfully. Emails were sent to participants.</>
     ),
+    image: "/success.png",
+  },
+  voted: {
+    title: "Success",
+    description: <>Vote recorded successfully.</>,
     image: "/success.png",
   },
 };

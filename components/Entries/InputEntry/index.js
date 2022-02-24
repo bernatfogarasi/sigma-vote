@@ -6,13 +6,14 @@ import { useState } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled(Form)`
-  display: contents;
-  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  grid-column: span 3;
   gap: 10px;
 `;
 
 const Add = styled(Submit)`
-  align-self: flex-end;
+  margin-left: auto;
 `;
 
 const InputEntry = ({

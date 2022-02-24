@@ -5,6 +5,7 @@ import { useContext } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
+  background: white;
   position: fixed;
   bottom: 10px;
   right: 10px;
