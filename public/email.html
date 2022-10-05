@@ -363,7 +363,17 @@
                                         line-height: 27.2px;
                                       "
                                       >You have been invited to take part in a
-                                      poll.</span
+                                      poll as: '{{name}}'.</span
+                                    >
+                                  </p>
+                                  <p style="font-size: 14px; line-height: 170%">
+                                    <span
+                                      style="
+                                        font-size: 16px;
+                                        line-height: 27.2px;
+                                      "
+                                      >Your vote is
+                                      anonymous.</span
                                     >
                                   </p>
                                 </div>
@@ -455,7 +465,7 @@
                                         font-size: 16px;
                                         line-height: 27.2px;
                                       "
-                                      >[TITLE]</span
+                                      >{{title}}</span
                                     >
                                   </p>
                                 </div>
@@ -545,7 +555,7 @@
                                         font-size: 16px;
                                         line-height: 27.2px;
                                       "
-                                      >[DESCRIPTION]</span
+                                      >{{description}}</span
                                     >
                                   </p>
                                 </div>
@@ -728,9 +738,9 @@
                                 align="left"
                               >
                                 <div align="center">
-                                  <!-- [if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;font-family:'Montserrat',sans-serif;"><tr><td style="font-family:'Montserrat',sans-serif;" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="[URL_VOTE]" style="height:47px; v-text-anchor:middle; width:168px;" arcsize="8.5%" stroke="f" fillcolor="#2d7dd2"><w:anchorlock/><center style="color:#FFFFFF;font-family:'Montserrat',sans-serif;"><![endif] -->
+                                  <!-- [if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;font-family:'Montserrat',sans-serif;"><tr><td style="font-family:'Montserrat',sans-serif;" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{url_vote}}" style="height:47px; v-text-anchor:middle; width:168px;" arcsize="8.5%" stroke="f" fillcolor="#2d7dd2"><w:anchorlock/><center style="color:#FFFFFF;font-family:'Montserrat',sans-serif;"><![endif] -->
                                   <a
-                                    href="[URL_VOTE]"
+                                    href="{{url_vote}}"
                                     target="_blank"
                                     style="
                                       box-sizing: border-box;
@@ -811,7 +821,7 @@
                                         line-height: 27.2px;
                                         color: black;
                                       "
-                                      >[URL_VOTE]</span
+                                      >{{url_vote}}</span
                                     >
                                   </p>
                                 </div>
@@ -992,9 +1002,9 @@
                                 align="left"
                               >
                                 <div align="center">
-                                  <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;font-family:'Montserrat',sans-serif;"><tr><td style="font-family:'Montserrat',sans-serif;" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="[URL_RESULTS]" style="height:47px; v-text-anchor:middle; width:190px;" arcsize="8.5%" stroke="f" fillcolor="#eeb902"><w:anchorlock/><center style="color:#FFFFFF;font-family:'Montserrat',sans-serif;"><![endif]-->
+                                  <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;font-family:'Montserrat',sans-serif;"><tr><td style="font-family:'Montserrat',sans-serif;" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{url_results}}" style="height:47px; v-text-anchor:middle; width:190px;" arcsize="8.5%" stroke="f" fillcolor="#eeb902"><w:anchorlock/><center style="color:#FFFFFF;font-family:'Montserrat',sans-serif;"><![endif]-->
                                   <a
-                                    href="[URL_RESULTS]"
+                                    href="{{url_results}}"
                                     target="_blank"
                                     style="
                                       box-sizing: border-box;
@@ -1075,7 +1085,7 @@
                                         line-height: 27.2px;
                                         color: black;
                                       "
-                                      >[URL_RESULTS]</span
+                                      >{{url_results}}</span
                                     >
                                   </p>
                                 </div>

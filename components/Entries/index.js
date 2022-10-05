@@ -1,13 +1,14 @@
-import Clear from "./Clear";
-import InputEntry from "./InputEntry";
+import Button from "components/Button";
+import Field from "components/Field";
+import LineHorizontal from "components/LineHorizontal";
 import Section from "components/Section";
 import Table_ from "components/Table";
 import usePoll from "hooks/usePoll";
 import styled from "styled-components";
+
+import Clear from "./Clear";
 import Create from "./Create";
-import Button from "components/Button";
-import Field from "components/Field";
-import LineHorizontal from "components/LineHorizontal";
+import InputEntry from "./InputEntry";
 
 const Wrapper = styled(Section)`
   display: grid;
@@ -71,6 +72,9 @@ const Entries = ({ className, header, type, ...props }) => {
       </Description>
       <Line />
       <Text>Add a participant</Text>
+      {!entries?.length || entries.length < 3 ? (
+        <Text>Please add at least 3 participants.</Text>
+      ) : null}
       <InputEntry
         {...Object.keys(header).reduce(
           (previous, key) => ({ ...previous, [key]: true }),
@@ -94,7 +98,7 @@ const Entries = ({ className, header, type, ...props }) => {
         />
       </TableContainer>
       <Clear disabled={!entries?.length} />
-      <Create type={type} disabled={!entries?.length} />
+      <Create type={type} disabled={!entries?.length || entries.length < 3} />
     </Wrapper>
   );
 };

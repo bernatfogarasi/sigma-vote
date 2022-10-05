@@ -62,7 +62,7 @@ const Feedback = ({ className, ...props }) => {
         title={
           <Title>
             <TitleText>{type.title}</TitleText>
-            <Image src={type.image} />
+            <Image src={type.image} alt="" />
           </Title>
         }
       >

@@ -1,9 +1,8 @@
-import Page from "components/Page";
 import Entries from "components/Entries";
+import Page from "components/Page";
 import { PollContext } from "contexts";
-import styled from "styled-components";
 import useLocalStorage from "hooks/useLocalStorage";
-import { useState } from "react";
+import styled from "styled-components";
 
 const Wrapper = styled(Page)``;
 

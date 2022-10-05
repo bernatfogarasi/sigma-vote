@@ -1,10 +1,12 @@
+import "smtpjs";
+
 import connect from "database/connect";
 import ContributionAnalysis from "models/ContributionAnalysis";
+import { shuffle } from "utils/algorithms";
+
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-import fs from "fs";
-import { SMTPClient } from "emailjs";
-import { shuffle } from "utils/algorithms";
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
 connect();
 
@@ -38,7 +40,7 @@ const GET = async (request, response) => {
 
   console.log(voter);
 
-  response.send({ voters });
+  return response.send({ voters });
 };
 
 const POST = async (request, response) => {
@@ -77,22 +79,10 @@ const POST = async (request, response) => {
 
     contributionAnalysis = await contributionAnalysis.save();
 
-    const path = require("path");
-
-    const htmlPath = path.resolve(process.cwd(), "public/email.html");
-
-    const html = fs.readFileSync(htmlPath, "utf-8");
-
-    const client = new SMTPClient({
-      user: process.env.EMAIL_ADDRESS,
-      password: process.env.EMAIL_PASSWORD,
-      // host: "smtp.gmail.com",
-      host: "smtp.gmail.com",
-      // ssl: true,
-      tls: true,
-      authentication: "PLAIN",
-    });
-
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    var apiKey = defaultClient.authentications["api-key"];
+    apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
+    var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
     const { id, voters: votersSaved } = contributionAnalysis;
     const base = `${request.headers.origin}/contribution-analysis/`;
 
@@ -106,26 +96,16 @@ const POST = async (request, response) => {
         });
 
         try {
-          const message = await client.sendAsync({
-            from: `SigmaVote <${email}>`,
-            to: email,
-            subject: `Voting invitation for ${name}`,
-            attachment: [
-              {
-                data: html
-                  .split("[URL_VOTE]")
-                  .join(`${base}vote?${queryString}`)
-                  .split("[URL_RESULTS]")
-                  .join(`${base}results?${queryString}`)
-                  .split("[TITLE]")
-                  .join(title)
-                  .split("[DESCRIPTION]")
-                  .join(description)
-                  .split("[NAME]")
-                  .join(name),
-                alternative: true,
-              },
-            ],
+          await apiInstance.sendTransacEmail({
+            to: [{ email }],
+            templateId: 1,
+            params: {
+              "{name}": name,
+              "{title}": title,
+              "{description}": description,
+              "{url_vote}": `${base}vote?${queryString}`,
+              "{url_results}": `${base}results?${queryString}`,
+            },
           });
         } catch (error) {
           console.log(error);
@@ -140,11 +120,11 @@ const POST = async (request, response) => {
     return response.status(500).send({ message: "Unknown error", error });
   }
 
-  response.json({ message: "Poll created successfully." });
+  return response.json({ message: "Poll created successfully." });
 };
 
 const handler = async (request, response) => {
-  await { GET, POST }[request.method](request, response);
+  return await { GET, POST }[request.method](request, response);
 };
 
 export default handler;
