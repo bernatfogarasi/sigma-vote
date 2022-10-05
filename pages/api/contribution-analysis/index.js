@@ -1,5 +1,3 @@
-import "smtpjs";
-
 import connect from "database/connect";
 import ContributionAnalysis from "models/ContributionAnalysis";
 import { shuffle } from "utils/algorithms";
